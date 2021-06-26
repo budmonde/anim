@@ -3,7 +3,8 @@ from skimage.filters import gabor_kernel
 
 
 def gaussian(inp, mean, sigma):
-    return np.exp(-((inp - mean) / sigma) ** 2 / 2)#  / ((2 * np.pi) ** 0.5 * sigma)
+    return np.exp(-((inp - mean) / sigma) ** 2 / 2)
+#  / ((2 * np.pi) ** 0.5 * sigma)
 
 
 class GaussianBlob:
@@ -13,17 +14,37 @@ class GaussianBlob:
         self.sigma = sigma
         self.trunc = trunc
 
-
     def draw(self, arr):
         x = np.linspace(-1, 1, arr.shape[2])
         y = np.linspace(1, -1, arr.shape[1])
 
         gauss_x = gaussian(x, self.location[0], self.sigma)
         gauss_y = gaussian(y, self.location[1], self.sigma)
+        gauss = (gauss_x[None, :] * gauss_y[:, None])
 
-        gauss = (gauss_x[None, :] * gauss_y[:, None]) * self.peak_luminance
+        arr += gauss * self.peak_luminance
 
-        arr += gauss
+
+class GaborBlob:
+    def __init__(self, location, peak_luminance, freq, sigma):
+        self.location = location
+        self.peak_luminance = peak_luminance
+        self.freq = freq
+        self.sigma = sigma
+
+    def draw(self, arr):
+        x = np.linspace(-1, 1, arr.shape[2])
+        y = np.linspace(-1, 1, arr.shape[1])
+
+        gauss_x = gaussian(x, self.location[0], self.sigma)
+        gauss_y = gaussian(y, self.location[1], self.sigma)
+        gauss = (gauss_x[None, :] * gauss_y[:, None])
+
+        sine = np.cos(2 * np.pi * self.freq * x)
+
+        field = gauss * sine
+
+        arr += field * self.peak_luminance
 
 
 class TranslatingSine:
