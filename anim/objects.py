@@ -8,15 +8,14 @@ def gaussian(inp, mean, sigma):
 
 
 class GaussianBlob:
-    def __init__(self, location, peak_luminance, sigma, trunc=3.0):
+    def __init__(self, location, peak_luminance, sigma):
         self.location = location
         self.peak_luminance = peak_luminance
         self.sigma = sigma
-        self.trunc = trunc
 
     def draw(self, arr):
         x = np.linspace(-1, 1, arr.shape[2])
-        y = np.linspace(1, -1, arr.shape[1])
+        y = np.linspace(-1, 1, arr.shape[1])
 
         gauss_x = gaussian(x, self.location[0], self.sigma)
         gauss_y = gaussian(y, self.location[1], self.sigma)
